@@ -8,7 +8,7 @@ from asyncio import Lock
 from typing import Any
 
 import paho.mqtt.client as mqtt
-from paho.mqtt.enums import MQTTErrorCode
+from paho.mqtt.enums import CallbackAPIVersion, MQTTErrorCode
 
 # Mypy is not seeing this for some reason. It wants me to use the depreciated ReasonCodes
 from paho.mqtt.reasoncodes import ReasonCode  # type: ignore
@@ -41,7 +41,7 @@ class _Mqtt(mqtt.Client):
 
     def __init__(self) -> None:
         """Initialize the MQTT client."""
-        super().__init__(protocol=mqtt.MQTTv5)
+        super().__init__(CallbackAPIVersion.VERSION2, protocol=mqtt.MQTTv5)
 
     def maybe_restart_loop(self) -> None:
         """Ensure that the MQTT loop is running in case it previously exited."""
@@ -125,7 +125,7 @@ class RoborockMqttClient(RoborockClient, ABC):
     def _mqtt_on_disconnect(
         self,
         client: mqtt.Client,
-        data: object,
+        userdata: object,
         flags: dict[str, int],
         rc: ReasonCode | None,
         properties: mqtt.Properties | None = None,
