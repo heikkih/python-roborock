@@ -9,6 +9,7 @@ import pytest
 
 from roborock.data import HomeData, UserData
 from roborock.devices.cache import InMemoryCache
+from roborock.devices.device import RoborockDevice
 from roborock.devices.device_manager import UserParams, create_device_manager, create_web_api_wrapper
 from roborock.exceptions import RoborockException
 
@@ -65,11 +66,17 @@ def mock_sleep() -> Generator[None, None, None]:
         yield
 
 
+@pytest.fixture(name="channel_exception")
+def channel_failure_exception_fixture(mock_rpc_channel: AsyncMock) -> Exception:
+    """Fixture that provides the exception to be raised by the failing channel."""
+    return RoborockException("Connection failed")
+
+
 @pytest.fixture(name="channel_failure")
-def channel_failure_fixture(mock_rpc_channel: AsyncMock) -> Generator[Mock, None, None]:
+def channel_failure_fixture(mock_rpc_channel: AsyncMock, channel_exception: Exception) -> Generator[Mock, None, None]:
     """Fixture that makes channel subscribe fail."""
     with patch("roborock.devices.device_manager.create_v1_channel") as mock_channel:
-        mock_channel.return_value.subscribe = AsyncMock(side_effect=RoborockException("Connection failed"))
+        mock_channel.return_value.subscribe = AsyncMock(side_effect=channel_exception)
         mock_channel.return_value.is_connected = False
         mock_channel.return_value.rpc_channel = mock_rpc_channel
         yield mock_channel
@@ -171,9 +178,36 @@ async def test_cache_logic() -> None:
         await device_manager.close()
 
 
+async def test_ready_callback(home_data: HomeData) -> None:
+    """Test that the ready callback is invoked when a device connects."""
+    ready_devices: list[RoborockDevice] = []
+    device_manager = await create_device_manager(USER_PARAMS, ready_callback=ready_devices.append)
+
+    # Callback should be called for the discovered device
+    assert len(ready_devices) == 1
+    device = ready_devices[0]
+    assert device.duid == "abc123"
+
+    # Verify that adding a ready callback to an already connected device will
+    # invoke the callback immediately.
+    more_ready_device: list[RoborockDevice] = []
+    device.add_ready_callback(more_ready_device.append)
+    assert len(more_ready_device) == 1
+    assert more_ready_device[0].duid == "abc123"
+
+    await device_manager.close()
+
+
+@pytest.mark.parametrize(
+    ("channel_exception"),
+    [
+        RoborockException("Connection failed"),
+    ],
+)
 async def test_start_connect_failure(home_data: HomeData, channel_failure: Mock, mock_sleep: Mock) -> None:
     """Test that start_connect retries when connection fails."""
-    device_manager = await create_device_manager(USER_PARAMS)
+    ready_devices: list[RoborockDevice] = []
+    device_manager = await create_device_manager(USER_PARAMS, ready_callback=ready_devices.append)
     devices = await device_manager.get_devices()
 
     # The device should attempt to connect in the background at least once
@@ -184,6 +218,7 @@ async def test_start_connect_failure(home_data: HomeData, channel_failure: Mock,
     # Device should exist but not be connected
     assert len(devices) == 1
     assert not devices[0].is_connected
+    assert not ready_devices
 
     # Verify retry attempts
     assert channel_failure.return_value.subscribe.call_count >= 1
@@ -203,6 +238,20 @@ async def test_start_connect_failure(home_data: HomeData, channel_failure: Mock,
         assert attempts < 10, "Device did not connect after multiple attempts"
 
     assert devices[0].is_connected
+    assert ready_devices
+    assert len(ready_devices) == 1
 
     await device_manager.close()
     assert mock_unsub.call_count == 1
+
+
+@pytest.mark.parametrize(
+    ("channel_exception"),
+    [
+        Exception("Unexpected error"),
+    ],
+)
+async def test_start_connect_unexpected_error(home_data: HomeData, channel_failure: Mock, mock_sleep: Mock) -> None:
+    """Test that some unexpected errors from start_connect are propagated."""
+    with pytest.raises(Exception, match="Unexpected error"):
+        await create_device_manager(USER_PARAMS)

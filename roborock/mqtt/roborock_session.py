@@ -19,6 +19,7 @@ from aiomqtt import MqttCodeError, MqttError, TLSParameters
 
 from roborock.callbacks import CallbackMap
 
+from .health_manager import HealthManager
 from .session import MqttParams, MqttSession, MqttSessionException, MqttSessionUnauthorized
 
 _LOGGER = logging.getLogger(__name__)
@@ -69,16 +70,23 @@ class RoborockMqttSession(MqttSession):
         self._stop = False
         self._backoff = MIN_BACKOFF_INTERVAL
         self._client: aiomqtt.Client | None = None
+        self._client_subscribed_topics: set[str] = set()
         self._client_lock = asyncio.Lock()
         self._listeners: CallbackMap[str, bytes] = CallbackMap(_LOGGER)
         self._connection_task: asyncio.Task[None] | None = None
         self._topic_idle_timeout = topic_idle_timeout
         self._idle_timers: dict[str, asyncio.Task[None]] = {}
+        self._health_manager = HealthManager(self.restart)
 
     @property
     def connected(self) -> bool:
         """True if the session is connected to the broker."""
         return self._healthy
+
+    @property
+    def health_manager(self) -> HealthManager:
+        """Return the health manager for the session."""
+        return self._health_manager
 
     async def start(self) -> None:
         """Start the MQTT session.
@@ -218,7 +226,7 @@ class RoborockMqttSession(MqttSession):
                 # Re-establish any existing subscriptions
                 async with self._client_lock:
                     self._client = client
-                    for topic in self._listeners.keys():
+                    for topic in self._client_subscribed_topics:
                         _LOGGER.debug("Re-establishing subscription to topic %s", topic)
                         # TODO: If this fails it will break the whole connection. Make
                         # this retry again in the background with backoff.
@@ -249,32 +257,42 @@ class RoborockMqttSession(MqttSession):
         unsub = self._listeners.add_callback(topic, callback)
 
         async with self._client_lock:
-            if self._client:
-                _LOGGER.debug("Establishing subscription to topic %s", topic)
-                try:
-                    await self._client.subscribe(topic)
-                except MqttError as err:
-                    # Clean up the callback if subscription fails
-                    unsub()
-                    raise MqttSessionException(f"Error subscribing to topic: {err}") from err
-            else:
-                _LOGGER.debug("Client not connected, will establish subscription later")
+            if topic not in self._client_subscribed_topics:
+                self._client_subscribed_topics.add(topic)
+                if self._client:
+                    _LOGGER.debug("Establishing subscription to topic %s", topic)
+                    try:
+                        await self._client.subscribe(topic)
+                    except MqttError as err:
+                        # Clean up the callback if subscription fails
+                        unsub()
+                        self._client_subscribed_topics.discard(topic)
+                        raise MqttSessionException(f"Error subscribing to topic: {err}") from err
+                else:
+                    _LOGGER.debug("Client not connected, will establish subscription later")
 
-        def schedule_unsubscribe():
+        def schedule_unsubscribe() -> None:
             async def idle_unsubscribe():
                 try:
                     await asyncio.sleep(self._topic_idle_timeout.total_seconds())
                     # Only unsubscribe if there are no callbacks left for this topic
                     if not self._listeners.get_callbacks(topic):
                         async with self._client_lock:
+                            # Check again if we have listeners, in case a subscribe happened
+                            # while we were waiting for the lock or after we popped the timer.
+                            if self._listeners.get_callbacks(topic):
+                                _LOGGER.debug("Skipping unsubscribe for %s, new listeners added", topic)
+                                return
+
+                            self._idle_timers.pop(topic, None)
+                            self._client_subscribed_topics.discard(topic)
+
                             if self._client:
                                 _LOGGER.debug("Idle timeout expired, unsubscribing from topic %s", topic)
                                 try:
                                     await self._client.unsubscribe(topic)
                                 except MqttError as err:
                                     _LOGGER.warning("Error unsubscribing from topic %s: %s", topic, err)
-                    # Clean up timer from dict
-                    self._idle_timers.pop(topic, None)
                 except asyncio.CancelledError:
                     _LOGGER.debug("Idle unsubscribe for topic %s cancelled", topic)
 
@@ -286,7 +304,10 @@ class RoborockMqttSession(MqttSession):
             unsub()  # Remove the callback from CallbackMap
             # If no more callbacks for this topic, start idle timer
             if not self._listeners.get_callbacks(topic):
+                _LOGGER.debug("Unsubscribing topic %s, starting idle timer", topic)
                 schedule_unsubscribe()
+            else:
+                _LOGGER.debug("Unsubscribing topic %s, still have active callbacks", topic)
 
         return delayed_unsub
 
@@ -322,6 +343,11 @@ class LazyMqttSession(MqttSession):
     def connected(self) -> bool:
         """True if the session is connected to the broker."""
         return self._session.connected
+
+    @property
+    def health_manager(self) -> HealthManager:
+        """Return the health manager for the session."""
+        return self._session.health_manager
 
     async def _maybe_start(self) -> None:
         """Start the MQTT session if not already started."""

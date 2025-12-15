@@ -14,7 +14,7 @@ from roborock.data import (
     HomeDataProduct,
     UserData,
 )
-from roborock.devices.device import RoborockDevice
+from roborock.devices.device import DeviceReadyCallback, RoborockDevice
 from roborock.map.map_parser import MapParserConfig
 from roborock.mqtt.roborock_session import create_lazy_mqtt_session
 from roborock.mqtt.session import MqttSession
@@ -78,12 +78,13 @@ class DeviceManager:
         home_data = cache_data.home_data
 
         device_products = home_data.device_products
-        _LOGGER.debug("Discovered %d devices %s", len(device_products), home_data)
+        _LOGGER.debug("Discovered %d devices", len(device_products))
 
         # These are connected serially to avoid overwhelming the MQTT broker
         new_devices = {}
         start_tasks = []
         for duid, (device, product) in device_products.items():
+            _LOGGER.debug("[%s] Discovered device %s %s", duid, product.summary_info(), device.summary_info())
             if duid in self._devices:
                 continue
             new_device = self._device_creator(home_data, device, product)
@@ -155,6 +156,7 @@ async def create_device_manager(
     cache: Cache | None = None,
     map_parser_config: MapParserConfig | None = None,
     session: aiohttp.ClientSession | None = None,
+    ready_callback: DeviceReadyCallback | None = None,
 ) -> DeviceManager:
     """Convenience function to create and initialize a DeviceManager.
 
@@ -163,6 +165,7 @@ async def create_device_manager(
         cache: Optional cache implementation to use for caching device data.
         map_parser_config: Optional configuration for parsing maps.
         session: Optional aiohttp ClientSession to use for HTTP requests.
+        ready_callback: Optional callback to be notified when a device is ready.
 
     Returns:
         An initialized DeviceManager with discovered devices.
@@ -199,10 +202,23 @@ async def create_device_manager(
                 trait = a01.create(product, channel)
             case DeviceVersion.B01:
                 channel = create_mqtt_channel(user_data, mqtt_params, mqtt_session, device)
-                trait = b01.create(channel)
+                model_part = product.model.split(".")[-1]
+                if "ss" in model_part:
+                    raise NotImplementedError(
+                        f"Device {device.name} has unsupported version B01_{product.model.strip('.')[-1]}"
+                    )
+                elif "sc" in model_part:
+                    # Q7 devices start with 'sc' in their model naming.
+                    trait = b01.q7.create(channel)
+                else:
+                    raise NotImplementedError(f"Device {device.name} has unsupported B01 model: {product.model}")
             case _:
                 raise NotImplementedError(f"Device {device.name} has unsupported version {device.pv}")
-        return RoborockDevice(device, product, channel, trait)
+
+        dev = RoborockDevice(device, product, channel, trait)
+        if ready_callback:
+            dev.add_ready_callback(ready_callback)
+        return dev
 
     manager = DeviceManager(web_api, device_creator, mqtt_session=mqtt_session, cache=cache)
     await manager.discover_devices()

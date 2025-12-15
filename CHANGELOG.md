@@ -2,6 +2,269 @@
 
 <!-- version list -->
 
+## v3.17.0 (2025-12-15)
+
+### Chores
+
+- **deps**: Bump python-semantic-release/publish-action
+  ([#679](https://github.com/Python-roborock/python-roborock/pull/679),
+  [`3cf1a9a`](https://github.com/Python-roborock/python-roborock/commit/3cf1a9af0d65482c65a14b2d266ff3b134dcb6f8))
+
+- **deps**: Bump python-semantic-release/python-semantic-release
+  ([#680](https://github.com/Python-roborock/python-roborock/pull/680),
+  [`2afa86c`](https://github.com/Python-roborock/python-roborock/commit/2afa86cdf234ef5626dbf9f2f778d0a3b23ac5a7))
+
+- **deps-dev**: Bump mypy from 1.19.0 to 1.19.1
+  ([#683](https://github.com/Python-roborock/python-roborock/pull/683),
+  [`bfb2c63`](https://github.com/Python-roborock/python-roborock/commit/bfb2c63e85d96c2c663686e05c598d0e724685a9))
+
+- **deps-dev**: Bump ruff from 0.14.6 to 0.14.9
+  ([#682](https://github.com/Python-roborock/python-roborock/pull/682),
+  [`cfd51e4`](https://github.com/Python-roborock/python-roborock/commit/cfd51e4a75eecb66f60ac137ece36b2fa7583ea9))
+
+### Features
+
+- Improvements to B01 for HA integration
+  ([#678](https://github.com/Python-roborock/python-roborock/pull/678),
+  [`97fb0b7`](https://github.com/Python-roborock/python-roborock/commit/97fb0b75ff4aa164d81340d276991537e0c9662e))
+
+
+## v3.16.1 (2025-12-14)
+
+### Bug Fixes
+
+- Share a HealthManager instance across all mqtt channels
+  ([#672](https://github.com/Python-roborock/python-roborock/pull/672),
+  [`4ad95dd`](https://github.com/Python-roborock/python-roborock/commit/4ad95ddee4d4d4cd64c7908f150c71d81f45e705))
+
+
+## v3.16.0 (2025-12-14)
+
+### Bug Fixes
+
+- Fix bugs in the subscription idle timeout
+  ([#665](https://github.com/Python-roborock/python-roborock/pull/665),
+  [`85b7bee`](https://github.com/Python-roborock/python-roborock/commit/85b7beeb810cfb3d501658cd44f06b2c0052ca33))
+
+- Harden the device connection logic used in startup
+  ([#666](https://github.com/Python-roborock/python-roborock/pull/666),
+  [`19703f4`](https://github.com/Python-roborock/python-roborock/commit/19703f42fe692a38f8f8639b1136a7585eae76fc))
+
+- Harden the initial startup logic
+  ([#666](https://github.com/Python-roborock/python-roborock/pull/666),
+  [`19703f4`](https://github.com/Python-roborock/python-roborock/commit/19703f42fe692a38f8f8639b1136a7585eae76fc))
+
+### Chores
+
+- Apply suggestions from code review
+  ([#675](https://github.com/Python-roborock/python-roborock/pull/675),
+  [`ab2de5b`](https://github.com/Python-roborock/python-roborock/commit/ab2de5bda7b8e1ff1ad46c7f2bf3b39dc9af4ace))
+
+- Clarify comments and docstrings
+  ([#666](https://github.com/Python-roborock/python-roborock/pull/666),
+  [`19703f4`](https://github.com/Python-roborock/python-roborock/commit/19703f42fe692a38f8f8639b1136a7585eae76fc))
+
+- Fix logging ([#666](https://github.com/Python-roborock/python-roborock/pull/666),
+  [`19703f4`](https://github.com/Python-roborock/python-roborock/commit/19703f42fe692a38f8f8639b1136a7585eae76fc))
+
+- Reduce whitespace changes ([#666](https://github.com/Python-roborock/python-roborock/pull/666),
+  [`19703f4`](https://github.com/Python-roborock/python-roborock/commit/19703f42fe692a38f8f8639b1136a7585eae76fc))
+
+- Revert whitespace change ([#666](https://github.com/Python-roborock/python-roborock/pull/666),
+  [`19703f4`](https://github.com/Python-roborock/python-roborock/commit/19703f42fe692a38f8f8639b1136a7585eae76fc))
+
+### Features
+
+- Add basic schedule getting ([#675](https://github.com/Python-roborock/python-roborock/pull/675),
+  [`ab2de5b`](https://github.com/Python-roborock/python-roborock/commit/ab2de5bda7b8e1ff1ad46c7f2bf3b39dc9af4ace))
+
+
+## v3.15.0 (2025-12-14)
+
+### Chores
+
+- Address some comments ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+- Apply suggestions from code review
+  ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+- Fix test naming ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+- Small tweaks ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+- Update roborock/devices/b01_channel.py
+  ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+- Update snapshot ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+### Features
+
+- Add b01 Q7 basic getter support
+  ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+- Add b01 Q7 support ([#662](https://github.com/Python-roborock/python-roborock/pull/662),
+  [`b3664bc`](https://github.com/Python-roborock/python-roborock/commit/b3664bcc0764d1dfbde2af9588dc0821c3ca1317))
+
+
+## v3.14.3 (2025-12-14)
+
+### Bug Fixes
+
+- Allow firmware version as an optional field
+  ([#670](https://github.com/Python-roborock/python-roborock/pull/670),
+  [`0f70bf9`](https://github.com/Python-roborock/python-roborock/commit/0f70bf9dd2010c2c72b3b9543d891a1071dc22c4))
+
+### Chores
+
+- Add test for example offline device
+  ([#670](https://github.com/Python-roborock/python-roborock/pull/670),
+  [`0f70bf9`](https://github.com/Python-roborock/python-roborock/commit/0f70bf9dd2010c2c72b3b9543d891a1071dc22c4))
+
+
+## v3.14.2 (2025-12-14)
+
+### Bug Fixes
+
+- Additional device logging improvements
+  ([#668](https://github.com/Python-roborock/python-roborock/pull/668),
+  [`a86db71`](https://github.com/Python-roborock/python-roborock/commit/a86db717a07d24b0e6ab471ee814b0853b523918))
+
+- Improve device logging ([#668](https://github.com/Python-roborock/python-roborock/pull/668),
+  [`a86db71`](https://github.com/Python-roborock/python-roborock/commit/a86db717a07d24b0e6ab471ee814b0853b523918))
+
+### Chores
+
+- Further readability improvements to device logging
+  ([#668](https://github.com/Python-roborock/python-roborock/pull/668),
+  [`a86db71`](https://github.com/Python-roborock/python-roborock/commit/a86db717a07d24b0e6ab471ee814b0853b523918))
+
+- Improve device logging container summary string
+  ([#668](https://github.com/Python-roborock/python-roborock/pull/668),
+  [`a86db71`](https://github.com/Python-roborock/python-roborock/commit/a86db717a07d24b0e6ab471ee814b0853b523918))
+
+
+## v3.14.1 (2025-12-14)
+
+### Bug Fixes
+
+- Fix diagnostic data redaction to use camelized keys
+  ([#669](https://github.com/Python-roborock/python-roborock/pull/669),
+  [`6a20e27`](https://github.com/Python-roborock/python-roborock/commit/6a20e27506d01fbb30683c2d74d26ab073aa3036))
+
+### Chores
+
+- Remove redundant/broken part of the readme
+  ([#667](https://github.com/Python-roborock/python-roborock/pull/667),
+  [`b629a61`](https://github.com/Python-roborock/python-roborock/commit/b629a61f28f3bb64914a9bc461ce9f7a27a30c35))
+
+- **deps**: Bump pdoc from 15.0.4 to 16.0.0
+  ([#652](https://github.com/Python-roborock/python-roborock/pull/652),
+  [`5f4c14e`](https://github.com/Python-roborock/python-roborock/commit/5f4c14ead4eda21cd6954e3898d79a6eaa983f62))
+
+
+## v3.14.0 (2025-12-14)
+
+### Bug Fixes
+
+- Add device logger ([#663](https://github.com/Python-roborock/python-roborock/pull/663),
+  [`06d051c`](https://github.com/Python-roborock/python-roborock/commit/06d051c7b8203e23970d52d65abec88a2757227f))
+
+- Update roborock/devices/device.py
+  ([#664](https://github.com/Python-roborock/python-roborock/pull/664),
+  [`494c5b4`](https://github.com/Python-roborock/python-roborock/commit/494c5b4f2b447f12f5ef90167cad16e08a8230ac))
+
+### Chores
+
+- Add details about test structure
+  ([#633](https://github.com/Python-roborock/python-roborock/pull/633),
+  [`109d05b`](https://github.com/Python-roborock/python-roborock/commit/109d05ba86275f2cdd65c5cda12fc423cbfb5850))
+
+- Add more tests for already connected devices
+  ([#664](https://github.com/Python-roborock/python-roborock/pull/664),
+  [`494c5b4`](https://github.com/Python-roborock/python-roborock/commit/494c5b4f2b447f12f5ef90167cad16e08a8230ac))
+
+- Apply suggestions from code review
+  ([#663](https://github.com/Python-roborock/python-roborock/pull/663),
+  [`06d051c`](https://github.com/Python-roborock/python-roborock/commit/06d051c7b8203e23970d52d65abec88a2757227f))
+
+- Document combined mqtt channels
+  ([#633](https://github.com/Python-roborock/python-roborock/pull/633),
+  [`109d05b`](https://github.com/Python-roborock/python-roborock/commit/109d05ba86275f2cdd65c5cda12fc423cbfb5850))
+
+- Fix lint errors ([#664](https://github.com/Python-roborock/python-roborock/pull/664),
+  [`494c5b4`](https://github.com/Python-roborock/python-roborock/commit/494c5b4f2b447f12f5ef90167cad16e08a8230ac))
+
+- Fix lint errors ([#633](https://github.com/Python-roborock/python-roborock/pull/633),
+  [`109d05b`](https://github.com/Python-roborock/python-roborock/commit/109d05ba86275f2cdd65c5cda12fc423cbfb5850))
+
+- Fix lint errors in readme ([#633](https://github.com/Python-roborock/python-roborock/pull/633),
+  [`109d05b`](https://github.com/Python-roborock/python-roborock/commit/109d05ba86275f2cdd65c5cda12fc423cbfb5850))
+
+- Fix typo ([#633](https://github.com/Python-roborock/python-roborock/pull/633),
+  [`109d05b`](https://github.com/Python-roborock/python-roborock/commit/109d05ba86275f2cdd65c5cda12fc423cbfb5850))
+
+- Update device traits by protocol
+  ([#633](https://github.com/Python-roborock/python-roborock/pull/633),
+  [`109d05b`](https://github.com/Python-roborock/python-roborock/commit/109d05ba86275f2cdd65c5cda12fc423cbfb5850))
+
+- Update devices documentation with design details
+  ([#633](https://github.com/Python-roborock/python-roborock/pull/633),
+  [`109d05b`](https://github.com/Python-roborock/python-roborock/commit/109d05ba86275f2cdd65c5cda12fc423cbfb5850))
+
+- Use the existing device logger
+  ([#663](https://github.com/Python-roborock/python-roborock/pull/663),
+  [`06d051c`](https://github.com/Python-roborock/python-roborock/commit/06d051c7b8203e23970d52d65abec88a2757227f))
+
+### Features
+
+- Add ability to listen for ready devices
+  ([#664](https://github.com/Python-roborock/python-roborock/pull/664),
+  [`494c5b4`](https://github.com/Python-roborock/python-roborock/commit/494c5b4f2b447f12f5ef90167cad16e08a8230ac))
+
+
+## v3.13.1 (2025-12-12)
+
+### Bug Fixes
+
+- Clean up some naming ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+- Update roborock/devices/traits/b01/__init__.py
+  ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+- Use strip not split ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+### Chores
+
+- Refactor to separate b01 q7 and q10 logic
+  ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+- Refactor to seperate b01 ss and sc logic
+  ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+- Share duplicated code ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+- Update roborock/devices/device_manager.py
+  ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+- Update roborock/devices/traits/b01/q7/__init__.py
+  ([#635](https://github.com/Python-roborock/python-roborock/pull/635),
+  [`9a1a360`](https://github.com/Python-roborock/python-roborock/commit/9a1a3600fb3eff612088e9203a04f795678e9da7))
+
+
 ## v3.13.0 (2025-12-12)
 
 ### Bug Fixes
